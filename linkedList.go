@@ -32,16 +32,20 @@ func printKeys(linked *List) {
 	}
 }
 
-func deleteElToLinked(key int, linked *List) *List {
-	var prev *List
-	for i := linked; i != nil; i = i.prev {
+func deleteElToLinked(key int, linked **List) *List {
+	var prev *List = nil
+	for i := *linked; i != nil; i = i.prev {
 		if i.key == key {
+			if prev == nil {
+				*linked = i.prev
+				fmt.Printf("Элемент с ключом %d был удален из связанного списка\n", i.key)
+				return i
+			}
 			// удаляем элемент
 			prev.prev = i.prev
 			fmt.Printf("Элемент с ключом %d был удален из связанного списка\n", i.key)
 			// возвращаем адрес удаленного элемента
 			return i
-			
 		}
 		prev = i
 	}
@@ -66,9 +70,9 @@ func main() {
 	printKeys(linked)
 
 	fmt.Printf("Удаляем элемент с ключом %d из связанного списка:\n", findElement)
-	fmt.Println(deleteElToLinked(findElement, linked))
+	fmt.Println(deleteElToLinked(findElement, &linked))
 	
 	fmt.Printf("Проверяем, что элемента с ключом %d нет в связанном списке:\n", findElement)
-	findElToLinked(findElement, linked)
+	findElToLinked(findElToLinked, linked)
 	printKeys(linked)
 }
