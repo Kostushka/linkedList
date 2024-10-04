@@ -26,9 +26,22 @@ func findElToLinked(key int, linked *List) *List {
 	return nil
 }
 
-func printKeys(linked *List) {
+func printElToLinked(linked *List) {
+	if linked == nil {
+		fmt.Println("Связанный список пуст")
+		return
+	}
 	for i := linked; i != nil; i = i.prev {
 		fmt.Println(i)
+	}
+}
+
+func deleteAll(linked **List) {
+	for i := *linked; i != nil; i = i.prev {
+		*linked = i.prev
+		fmt.Println("----")
+		printElToLinked(*linked)
+		fmt.Println("----")
 	}
 }
 
@@ -67,12 +80,15 @@ func main() {
 	fmt.Println("Адрес найденного элемента:", resFind)
 
 	fmt.Println("Вывести все ключи связанного списка:")
-	printKeys(linked)
+	printElToLinked(linked)
 
 	fmt.Printf("Удаляем элемент с ключом %d из связанного списка:\n", findElement)
 	fmt.Println(deleteElToLinked(findElement, &linked))
 	
 	fmt.Printf("Проверяем, что элемента с ключом %d нет в связанном списке:\n", findElement)
-	findElToLinked(findElToLinked, linked)
-	printKeys(linked)
+	findElToLinked(findElement, linked)
+	printElToLinked(linked)
+
+	fmt.Println("Последовательно удаляем элементы из связаннго списка:")
+	deleteAll(&linked)
 }
