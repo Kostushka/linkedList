@@ -31,24 +31,26 @@ func findNElToLinked(num int, linked *List) *List {
 		fmt.Println("Порядковый номер искомого элемента не должен быть меньше 1")
 		return nil
 	}
-	// узнать размер связанного списка
+	// размер связанного списка
 	linkedSize := 0
+	// здесь будет искомый элемент связанного списка
+	result := linked
+	// счетчик
+	count := num
 	for i := linked; i != nil; i = i.prev {
 		linkedSize++
+		if count == 0 {
+			// если счетчик доходит до порядкого номера искомого элемента, и это не конец списка, берем предыдущий элемент списка
+			result = result.prev
+			count++
+		}
+		count--
 	}
-	// посчитать, сколько элементов надо пропустить, чтобы дойти до искомого
-	countMissEl := linkedSize - num
-	if countMissEl < 0 {
+	if num > linkedSize {
 		fmt.Printf("Элемент с порядковым номером %d не найден. В связанном списке %d элементов\n", num, linkedSize)
 		return nil
 	}
-	// дойти до искомого элемента
-	res := linked
-	for countMissEl > 0 {
-		res = res.prev
-		countMissEl--
-	}
-	return res
+	return result
 }
 
 func printElToLinked(linked *List) {
@@ -106,7 +108,7 @@ func main() {
 	fmt.Println("Адрес найденного элемента:", resFind)
 	fmt.Println("****")
 
-	numEl := 8
+	numEl := 10
 	fmt.Printf("Ищем элемент с порядковым номером %d в связанном списке:\n", numEl)
 	fmt.Printf("Адрес элемента: %v\n", findNElToLinked(numEl, linked))
 	fmt.Println("****")
