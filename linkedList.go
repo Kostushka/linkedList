@@ -5,50 +5,44 @@ import (
 	"errors"
 )
 
-type List struct {
+type Item struct {
 	key int
-	prev *List
+	prev *Item
 }
 
 type LinkedList struct {
-	linked *List
+	linked *Item
 	size int
 }
 
-func createLinkedList() *LinkedList {
-	// адрес последнего добавленного элемента связанного списка будет лежать в переменной
-	var linked *List
+func newLinkedList() *LinkedList {
 	// связанный список
-	return &LinkedList{
-		linked: linked,
-		size: 0,
-	}
+	return &LinkedList{}
 }
 
-func (l *LinkedList) addElToLinked(key int) {
+func (l *LinkedList) addEl(key int) {
 	// создали новый элемент связанного списка, в нем лежит адрес предыдущего элемента
-	newList := List{key, l.linked}
 	// положили адрес нового элемента на место прежнего, прежний адрес остался записан в новом элементе в поле prev
-	l.linked = &newList
+	l.linked = &Item{key, l.linked}
 	l.size++
 }
 
-func (l *LinkedList) findElToLinked(key int) (*List, error) {
+func (l *LinkedList) findEl(key int) (*Item, error) {
 	// ищем элемент по связанному списку
-	for j := l.linked; j != nil; j = j.prev {
-		if j.key == key {
-			return j, nil
+	for n := l.linked; n != nil; n = n.prev {
+		if n.key == key {
+			return n, nil
 		}
 	}
 	return nil, fmt.Errorf("Элемент %d не найден", key)
 }
 
-func (l *LinkedList) findNElToLinked(num int) (*List, error) {
+func (l *LinkedList) findNEl(num int) (*Item, error) {
 	if num <= 0 {
 		return nil, errors.New("Порядковый номер искомого элемента не должен быть меньше 1")
 	}
 	if num > l.size {
-		return nil, fmt.Errorf("Элемент с порядковым номером %d не найден. В связанном списке %d элементов", num, l.size)
+		return nil, fmt.Errorf("Элемента с порядковым номером %d в списке нет. В связанном списке %d элементов", num, l.size)
 	}
 	// здесь будет искомый элемент связанного списка
 	result := l.linked
@@ -61,58 +55,58 @@ func (l *LinkedList) findNElToLinked(num int) (*List, error) {
 	return result, nil
 }
 
-func (l *LinkedList) printElToLinked() {
+func (l *LinkedList) printEl() {
 	if l.linked == nil {
 		fmt.Println("Связанный список пуст")
 		return
 	}
-	for i := l.linked; i != nil; i = i.prev {
-		fmt.Println(i)
+	for n := l.linked; n != nil; n = n.prev {
+		fmt.Println(n)
 	}
 }
 
 func (l *LinkedList) deleteAll() {
-	for i := l.linked; i != nil; i = i.prev {
-		l.linked = i.prev
+	for n := l.linked; n != nil; n = n.prev {
+		l.linked = n.prev
 		fmt.Println("----")
-		l.printElToLinked()
+		l.printEl()
 		fmt.Println("----")
 	}
 }
 
-func (l *LinkedList) deleteElToLinked(key int) (*List, error) {
-	var prev *List = nil
-	for i := l.linked; i != nil; i = i.prev {
-		if i.key == key {
+func (l *LinkedList) deleteEl(key int) (*Item, error) {
+	var prev *Item = nil
+	for n := l.linked; n != nil; n = n.prev {
+		if n.key == key {
 			// если первый же элемент является искомым
 			if prev == nil {
-				l.linked = i.prev
-				return i, nil
+				l.linked = n.prev
+				return n, nil
 			}
 			// удаляем элемент
-			prev.prev = i.prev
+			prev.prev = n.prev
 			// возвращаем адрес удаленного элемента
-			return i, nil
+			return n, nil
 		}
-		prev = i
+		prev = n
 	}
 	return nil, fmt.Errorf("Элемент с ключом %d не был найден в связанном списке", key)
 }
 
 func main() {
 	// связанный список
-	linkedList := createLinkedList()
+	linkedList := newLinkedList()
 	
 	// добавляем элементы связанного списка в связанный список
 	for i := 0; i < 10; i++ {
-		linkedList.addElToLinked(i)
+		linkedList.addEl(i)
 	}
 
 	findElement := 1
 
 	fmt.Println("****")
 	fmt.Printf("Ищем элемент с ключом %d в связанном списке:\n", findElement)
-	resFind, err := linkedList.findElToLinked(findElement)
+	resFind, err := linkedList.findEl(findElement)
 	if err == nil {
 		fmt.Printf("Элемент с ключом %d найден\n", findElement)
 	} else {
@@ -123,7 +117,7 @@ func main() {
 
 	numEl := 8
 	fmt.Printf("Ищем элемент с порядковым номером %d в связанном списке:\n", numEl)
-	result, err := linkedList.findNElToLinked(numEl)
+	result, err := linkedList.findNEl(numEl)
 	if err == nil {
 		fmt.Printf("Адрес элемента: %v\n", result)
 	} else {
@@ -132,11 +126,11 @@ func main() {
 	fmt.Println("****")
 
 	fmt.Println("Вывести все ключи связанного списка:")
-	linkedList.printElToLinked()
+	linkedList.printEl()
 	fmt.Println("****")
 
 	fmt.Printf("Удаляем элемент с ключом %d из связанного списка:\n", findElement)
-	deletedEl, err := linkedList.deleteElToLinked(findElement)
+	deletedEl, err := linkedList.deleteEl(findElement)
 	if err == nil {
 		fmt.Printf("Элемент с ключом %d был удален из связанного списка\n", deletedEl)
 	} else {
@@ -145,13 +139,13 @@ func main() {
 	fmt.Println("****")
 	
 	fmt.Printf("Проверяем, что элемента с ключом %d нет в связанном списке:\n", findElement)
-	res, err := linkedList.findElToLinked(findElement)
+	res, err := linkedList.findEl(findElement)
 	if err == nil {
 		fmt.Printf("Элемент с ключом %d найден\n", res)
 	} else {
 		fmt.Println(err)
 	}
-	linkedList.printElToLinked()
+	linkedList.printEl()
 	fmt.Println("****")
 
 	fmt.Println("Последовательно удаляем элементы из связанного списка:")
