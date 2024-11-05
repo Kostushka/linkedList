@@ -23,7 +23,10 @@ func newLinkedList() *LinkedList {
 func (l *LinkedList) addEl(key int) {
 	// создали новый элемент связанного списка, в нем лежит адрес предыдущего элемента
 	// положили адрес нового элемента на место прежнего, прежний адрес остался записан в новом элементе в поле prev
-	l.linked = &Item{key, l.linked}
+	l.linked = &Item{
+		key: key, 
+		prev: l.linked,
+	}
 	l.size++
 }
 
